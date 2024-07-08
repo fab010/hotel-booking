@@ -6,7 +6,7 @@ type Props = {
 
 const MyBookingDetails = ({ booking }: Props) => {
     return (
-        <div className="space-y-2 text-normal py-2 h-fit">
+        <div className="space-y-2 text-normal py-2">
             <div>
                 Dates:
                 <div  className="font-semibold">

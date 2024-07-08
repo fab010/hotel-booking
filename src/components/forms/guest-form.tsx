@@ -1,11 +1,12 @@
 "use client";
 
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from "react-hook-form";
+import { LuCalendarDays } from "react-icons/lu";
 import { addDays } from "date-fns";
 import DatePicker from "react-datepicker";
-import SessionStorage from "@/lib/storage";
-import { HotelType, SearchParams } from '@/types';
+import { HotelType } from '@/types';
+
 
 
 type Props = {
@@ -24,9 +25,13 @@ type GuestInfoFormData = {
 
 const GuestForm = ({ hotel, isLoggedIn }: Props) => {
     const router = useRouter();
-    const search: SearchParams = SessionStorage.get("search");
-    const now = new Date();
-    const nextDay = addDays(new Date(), 1);
+    const searchParams = useSearchParams();
+    const search = {
+        checkIn: searchParams.get('checkIn'),
+        checkOut: searchParams.get('checkOut'),
+        adultCount: searchParams.get('adultCount'),
+        childCount: searchParams.get('childCount'),
+    }
 
     const {
         watch,
@@ -36,10 +41,10 @@ const GuestForm = ({ hotel, isLoggedIn }: Props) => {
         formState: { errors },
     } = useForm<GuestInfoFormData>({
         defaultValues: {
-            checkIn: new Date(search?.checkIn || now),
-            checkOut: new Date(search?.checkOut || nextDay),
-            adultCount: Number(search?.adultCount) || 1,
-            childCount: Number(search?.childCount) || 0,
+            checkIn: new Date(search.checkIn || ""),
+            checkOut: new Date(search.checkOut || ""),
+            adultCount: Number(search.adultCount) || 1,
+            childCount: Number(search.childCount) || 0,
         },
     });
 
@@ -50,19 +55,22 @@ const GuestForm = ({ hotel, isLoggedIn }: Props) => {
     const maxDate = new Date();
     maxDate.setFullYear(maxDate.getFullYear() + 1);
 
-
+    const handleChange = ([newStartDate, newEndDate]: [Date, Date]) => {
+        setValue("checkIn", newStartDate);
+        setValue("checkOut", newEndDate);
+    };
 
     const onSubmit = (data: GuestInfoFormData) => {
-        const searchParams: SearchParams = {
-            checkIn: data.checkIn.toISOString(),
-            checkOut: data.checkOut.toISOString(),
-            adultCount: data.adultCount.toString(),
-            childCount: data.childCount.toString(),
-        };
-        
-        SessionStorage.save("search", searchParams);
+        const {checkIn, checkOut, adultCount, childCount } = data;
 
-        router.push(`/hotel/${hotel._id}/booking`);
+        const params = new URLSearchParams();
+
+        params.set("checkIn", checkIn.toDateString());
+        params.set("checkOut", checkOut.toDateString());
+        params.set("adultCount", adultCount.toString());
+        params.set("childCount", childCount.toString());
+
+        router.push(`/hotel/${hotel._id}/booking?${params.toString()}`);
 
     };
 
@@ -79,42 +87,20 @@ const GuestForm = ({ hotel, isLoggedIn }: Props) => {
             >
                 <div className="grid grid-cols-1 gap-4 items-center">
                     <div>
-                        <DatePicker
-                            required
-                            selected={checkIn}
-                            onChange={(date) => {
-                                setValue("checkIn", date as Date);
-                                setValue("checkOut", addDays(date as Date, 1));
-                            }
-                            }
-
-                            selectsStart
-                            startDate={checkIn}
-                            endDate={checkIn}
-                            minDate={minDate}
-                            maxDate={maxDate}
-                            dateFormat="dd/MM/yyyy"
-                            placeholderText="Check-in Date"
-                            className="min-w-full bg-white p-2 focus:outline-none"
-                            wrapperClassName="min-w-full"
-                        />
-                    </div>
-                    <div>
-                        <DatePicker
-                            required
-                            selected={checkOut}
-                            onChange={(date) => setValue("checkOut", date as Date)}
-                            selectsStart
-                            startDate={checkIn}
-                            endDate={checkOut}
-                            minDate={checkOut}
-                            maxDate={maxDate}
-                            dateFormat="dd/MM/yyyy"
-                            placeholderText="Check-in Date"
-                            className="min-w-full bg-white p-2 focus:outline-none"
-                            wrapperClassName="min-w-full"
-                        />
-                    </div>
+                    <DatePicker
+              showIcon
+              selected={checkIn}
+              startDate={checkIn}
+              endDate={checkOut}
+              onChange={handleChange}
+              selectsRange
+              dateFormat=" eee MMM d"
+              monthsShown={2}
+              icon={<LuCalendarDays size={16} />}
+              className="text-sm font-medium p-2 w-full focus:outline-none"
+              wrapperClassName="min-w-full"
+            />
+            </div>
                     <div className="flex bg-white px-2 py-1 gap-2">
                         <label className="items-center flex">
                             Adults:

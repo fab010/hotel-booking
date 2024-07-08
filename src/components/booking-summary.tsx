@@ -1,9 +1,9 @@
 "use client";
 
-import { addDays } from "date-fns";
-import { HotelType, PaymentIntent, SearchParams, UserType } from '@/types';
-import SessionStorage from "@/lib/storage";
+import { useSearchParams } from 'next/navigation';
+import { HotelType, BookingHotelParams, UserType } from '@/types';
 import CheckoutForm from './forms/checkout-form';
+
 
 
 type Props = {
@@ -14,24 +14,22 @@ type Props = {
 
 
 const BookingSummary = ({ hotel, currentUser }: Props) => {
-    const search: SearchParams = SessionStorage.get("search");
-    const now = new Date();
-    const nextDay = addDays(new Date(), 1);
+    const searchParams = useSearchParams()
 
-    const paymentIntent: PaymentIntent = {
-        adultCount: Number(search?.adultCount) || 1,
-        childCount: Number(search?.childCount) || 0,
-        checkIn: new Date(search?.checkIn || now),
-        checkOut: new Date(search.checkOut || nextDay),
+    const bookingData: BookingHotelParams = {
+        adultCount: Number(searchParams.get('adultCount')) ,
+        childCount: Number(searchParams.get('childCount')),
+        checkIn: new Date(searchParams.get('checkIn') || ""),
+        checkOut: new Date(searchParams.get('checkOut') || ""),
         hotelId: hotel._id,
         userId: currentUser._id,
     };
 
     const numOfNights =
-        Math.ceil(Math.abs(paymentIntent.checkOut.getTime() - paymentIntent.checkIn.getTime()) /
+        Math.ceil(Math.abs(bookingData.checkOut.getTime() - bookingData.checkIn.getTime()) /
             (1000 * 60 * 60 * 24));
 
-    const nights = numOfNights > 1 ? 'nights' : 'night';
+
 
     const totalCost = hotel.pricePerNight * numOfNights;
 
@@ -54,7 +52,7 @@ const BookingSummary = ({ hotel, currentUser }: Props) => {
                         <div className="bg-blue-200 p-4 rounded-md">
                             Total Cost:
                             <div className="font-semibold text-lg">
-                                 £{totalCost.toFixed(2)}
+                                £{totalCost.toFixed(2)}
                             </div>
                             <div className="text-xs">Includes taxes and charges</div>
                         </div>
@@ -71,18 +69,18 @@ const BookingSummary = ({ hotel, currentUser }: Props) => {
                     <div className="flex flex-1 justify-between border-b py-2 gap-2">
                         <div>
                             Check-in
-                            <div className="font-bold"> {paymentIntent.checkIn.toDateString()}</div>
+                            <div className="font-bold"> {bookingData.checkIn.toDateString()}</div>
                         </div>
                         <div>
                             Check-out
-                            <div className="font-bold"> {paymentIntent.checkOut.toDateString()}</div>
+                            <div className="font-bold"> {bookingData.checkOut.toDateString()}</div>
                         </div>
                     </div>
 
                     <div className="border-b py-2">
                         Guests{" "}
                         <div className="font-bold">
-                            {paymentIntent.adultCount} adults & {paymentIntent.childCount} children
+                            {bookingData.adultCount} adults & {bookingData.childCount} children
                         </div>
                     </div>
 
@@ -93,13 +91,13 @@ const BookingSummary = ({ hotel, currentUser }: Props) => {
 
                     <div className="py-2">
                         Total length of stay:
-                        <div className="font-bold">{numOfNights}  {nights}</div>
+                        <div className="font-bold">{numOfNights} night(s)</div>
                     </div>
                 </div>
 
             </div>
             <div className="flex justify-end">
-                <CheckoutForm paymentIntent={paymentIntent} />
+                <CheckoutForm paymentIntent={bookingData} />
             </div>
         </div>
     );

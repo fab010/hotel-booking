@@ -2,102 +2,101 @@
 
 import React, { useContext, useState } from "react";
 import { addDays } from "date-fns";
+import SessionStorage from "@/lib/storage";
+import { SearchHotelParams } from "@/types";
 
 type SearchContext = {
-    destination: string;
-    checkIn: Date;
-    checkOut: Date;
-    adultCount: number;
-    childCount: number;
-    hotelId: string;
-    saveSearchValues: (
-        destination: string,
-        checkIn: Date,
-        checkOut: Date,
-        adultCount: number,
-        childCount: number
-    ) => void;
+  destination: string;
+  checkIn: Date;
+  checkOut: Date;
+  adultCount: number;
+  childCount: number;
+  hotelId: string;
+  saveSearchValues: (
+    destination: string,
+    checkIn: Date,
+    checkOut: Date,
+    adultCount: number,
+    childCount: number
+  ) => void;
 };
+
+const today = new Date();
+const nextDay = addDays(new Date(), 1);
+const initHotelSearch = () => {
+    return {
+      destination: "",
+      checkIn: today,
+      checkOut: nextDay,
+      adultCount: 1,
+      childCount: 0,
+    }
+  };
 
 const SearchContext = React.createContext<SearchContext | undefined>(undefined);
 
 type SearchContextProviderProps = {
-    children: React.ReactNode;
+  children: React.ReactNode;
 };
 
 export const SearchContextProvider = ({
-    children,
+  children,
 }: SearchContextProviderProps) => {
-    const [destination, setDestination] = useState<string>(
-        () => typeof window !== "undefined" && sessionStorage.getItem("destination") || ""
-    );
-    const [checkIn, setCheckIn] = useState<Date>(
-        () =>
-            new Date(typeof window !== "undefined" && sessionStorage.getItem("checkIn") || new Date().toISOString())
-    );
-    const [checkOut, setCheckOut] = useState<Date>(
-        () =>
-            new Date(typeof window !== "undefined" && sessionStorage.getItem("checkOut") || addDays(new Date(), 1).toISOString())
-    );
-    const [adultCount, setAdultCount] = useState<number>(() =>
-        parseInt(typeof window !== "undefined" && sessionStorage.getItem("adultCount") || "1")
-    );
-    const [childCount, setChildCount] = useState<number>(() =>
-        parseInt(typeof window !== "undefined" && sessionStorage.getItem("childCount") || "0")
-    );
-    const [hotelId, setHotelId] = useState<string>(
-        () => typeof window !== "undefined" && sessionStorage.getItem("hotelID") || ""
-    );
+  const storage: SearchHotelParams = SessionStorage.get("search") || initHotelSearch();
+  const [destination, setDestination] = useState<string>(storage.destination);
+  const [checkIn, setCheckIn] = useState<Date>(storage.checkIn);
+  const [checkOut, setCheckOut] = useState<Date>(storage.checkOut);
+  const [adultCount, setAdultCount] = useState<number>(storage.adultCount);
+  const [childCount, setChildCount] = useState<number>(storage.childCount);
+  const [hotelId, setHotelId] = useState<string>(storage?.hotelId || "");
 
+  const saveSearchValues = (
+    destination: string,
+    checkIn: Date,
+    checkOut: Date,
+    adultCount: number,
+    childCount: number,
+    hotelId?: string
+  ) => {
+    setDestination(destination);
+    setCheckIn(checkIn);
+    setCheckOut(checkOut);
+    setAdultCount(adultCount);
+    setChildCount(childCount);
+    if (hotelId) {
+      setHotelId(hotelId);
+    }
 
-    const saveSearchValues = (
-        destination: string,
-        checkIn: Date,
-        checkOut: Date,
-        adultCount: number,
-        childCount: number,
-        hotelId?: string
-    ) => {
-        setDestination(destination);
-        setCheckIn(checkIn);
-        setCheckOut(checkOut);
-        setAdultCount(adultCount);
-        setChildCount(childCount);
-        if (hotelId) {
-            setHotelId(hotelId);
-        }
+    const searchHotel: SearchHotelParams = {
+        destination,
+        checkIn,
+        checkOut,
+        adultCount,
+        childCount,
+        hotelId,
+      };
 
-        if (typeof window !== "undefined") {
-            sessionStorage.setItem("destination", destination);
-            sessionStorage.setItem("checkIn", checkIn.toISOString());
-            sessionStorage.setItem("checkOut", checkOut.toISOString());
-            sessionStorage.setItem("adultCount", adultCount.toString());
-            sessionStorage.setItem("childCount", childCount.toString());
+      SessionStorage.save("search", searchHotel);
+  };
 
-            if (hotelId) {
-                sessionStorage.setItem("hotelId", hotelId);
-            }
-        }
-    };
-
-    return (
-        <SearchContext.Provider
-            value={{
-                destination,
-                checkIn,
-                checkOut,
-                adultCount,
-                childCount,
-                hotelId,
-                saveSearchValues,
-            }}
-        >
-            {children}
-        </SearchContext.Provider>
-    );
+  return (
+    <SearchContext.Provider
+      value={{
+        destination,
+        checkIn,
+        checkOut,
+        adultCount,
+        childCount,
+        hotelId,
+        saveSearchValues,
+      }}
+    >
+      {children}
+    </SearchContext.Provider>
+  );
 };
 
 export const useSearchContext = () => {
-    const context = useContext(SearchContext);
-    return context as SearchContext;
+  const context = useContext(SearchContext);
+  return context as SearchContext;
 };

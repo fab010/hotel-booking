@@ -43,7 +43,7 @@ const MyHotels = async () => {
 
     return (
         <Container>
-            <div className="space-y-5">
+            <div className="space-y-5 my-4">
                 <div className="flex justify-between">
                     <h1 className="text-2xl font-bold">My Hotels</h1>
                     <Button

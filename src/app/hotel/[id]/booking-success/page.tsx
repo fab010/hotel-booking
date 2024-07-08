@@ -23,12 +23,11 @@ const BookingSuccess = async ({
                     <h1 className="text-2xl font-bold tracking-tight">Hotel Booked Successfully</h1>
                     <p className="text-lg font-normal">Thank you, <span className="font-semibold">{currentUser.firstName}</span> for booking hotel with us.</p>
                     <div className="flex flex-1 border border-slate-300 rounded-lg p-4 gap-5">
-                        <div className="relative h-[300px] overflow-hidden">
+                        <div className="relative h-[300px] overflow-hidden aspect-video">
                             <Image
                                 src={hotel.imageUrls[0]}
                                 alt={hotel.name}
-                                width={300}
-                                height={300}
+                                fill
                                 className="w-full h-full object-cover object-center"
                             />
                         </div>

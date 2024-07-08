@@ -7,8 +7,8 @@ const Navbar = async () => {
     const session = await auth();
     const isLoggedIn = session?.user ? true : false;
     return (
-        <div className='bg-blue-800 relative'>
-            <div className='flex text-white items-center justify-between p-4 gap-20'>
+        <div className='bg-blue-800 w-full relative z-10'>
+            <div className='flex text-white items-center justify-between p-4 gap-20 h-full'>
                 {/* logo section */}
                 <div className='font-bold text-2xl cursor-pointer flex items-center gap-1'>
                     <BookOpenIcon className='w-7 h-7' />

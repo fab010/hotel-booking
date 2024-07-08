@@ -1,12 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from 'next/navigation';
 import connectToDb from "@/lib/db";
 import Hotel from "@/models/hotel";
 import { constructSearchQuery, handleError } from "@/lib/utils";
-import { SearchParams } from "@/types";
 import { auth } from "@/auth";
 import { uploadImages } from "@/lib/load";
+import { SearchHotelQuery } from "@/types";
 
 
 export const getMyHotels = async (userId: string) => {
@@ -51,7 +52,7 @@ export const getHotel = async (id: string) => {
   }
 };
 
-export const searchHotels = async (searchParams: SearchParams) => {
+export const searchHotels = async (searchParams: SearchHotelQuery) => {
   const query = constructSearchQuery(searchParams);
   let sortOptions = {};
   switch (searchParams.sortOption) {
@@ -70,7 +71,7 @@ export const searchHotels = async (searchParams: SearchParams) => {
   const pageNumber = parseInt(
     searchParams.page ? searchParams.page : "1"
   );
-  
+
   const skip = (pageNumber - 1) * pageSize;
 
   try {
@@ -100,7 +101,7 @@ export const searchHotels = async (searchParams: SearchParams) => {
 export const addHotel = async (hotelFormData: FormData) => {
   const session = await auth();
   if (!session || !session.user?.id) {
-      throw new Error("Unauthorized");
+    throw new Error("Unauthorized");
   }
   const userId = session.user.id;
 
@@ -109,41 +110,41 @@ export const addHotel = async (hotelFormData: FormData) => {
   const imageUrls = await uploadImages(files);
 
   const {
+    name,
+    city,
+    country,
+    description,
+    starRating,
+    type,
+    pricePerNight,
+    adultCount,
+    childCount,
+  } = Object.fromEntries(hotelFormData.entries());
+
+  const facilities = hotelFormData.getAll('facilities') as string[];
+
+  try {
+    await connectToDb();
+    const newHotel = Hotel.create({
       name,
       city,
       country,
       description,
       starRating,
       type,
+      facilities,
       pricePerNight,
       adultCount,
       childCount,
-  } = Object.fromEntries(hotelFormData.entries());
+      imageUrls,
+      userId,
+      lastUpdated: new Date()
+    });
 
-  const facilities = hotelFormData.getAll('facilities') as string[];
-  
-  try {
-      await connectToDb();
-      const newHotel = Hotel.create({
-          name,
-          city,
-          country,
-          description,
-          starRating,
-          type,
-          facilities,
-          pricePerNight,
-          adultCount,
-          childCount,
-          imageUrls,
-          userId,
-          lastUpdated: new Date()
-      });
 
-      
-      revalidatePath("/hotel");
-      return JSON.parse(JSON.stringify(newHotel));
-  } catch(error) {
+    revalidatePath("/hotel");
+    return JSON.parse(JSON.stringify(newHotel));
+  } catch (error) {
     handleError(error);
   }
 
@@ -152,7 +153,7 @@ export const addHotel = async (hotelFormData: FormData) => {
 export const editHotel = async (hotelFormData: FormData) => {
   const session = await auth();
   if (!session || !session.user?.id) {
-      throw new Error("Unauthorized");
+    throw new Error("Unauthorized");
   }
 
   const userId = session.user.id;
@@ -162,63 +163,81 @@ export const editHotel = async (hotelFormData: FormData) => {
   const updatedImageUrls = await uploadImages(files);
 
   const {
-      name,
-      city,
-      country,
-      description,
-      starRating,
-      type,
-      pricePerNight,
-      adultCount,
-      childCount,
-      hotelId,
+    name,
+    city,
+    country,
+    description,
+    starRating,
+    type,
+    pricePerNight,
+    adultCount,
+    childCount,
+    hotelId,
   } = Object.fromEntries(hotelFormData.entries());
 
   const facilities = hotelFormData.getAll('facilities') as string[];
   const imageUrls = hotelFormData.getAll('imageUrls') as string[];
 
   try {
-      await connectToDb();
-      const updatedHotel = {
-          name,
-          city,
-          country,
-          description,
-          starRating,
-          type,
-          facilities,
-          pricePerNight,
-          adultCount,
-          childCount,
-          imageUrls,
-          lastUpdated: new Date(),
-      }
+    await connectToDb();
+    const updatedHotel = {
+      name,
+      city,
+      country,
+      description,
+      starRating,
+      type,
+      facilities,
+      pricePerNight,
+      adultCount,
+      childCount,
+      imageUrls,
+      lastUpdated: new Date(),
+    }
 
 
-      const hotel = await Hotel.findOneAndUpdate(
-          {
-              _id: hotelId,
-              userId: userId,
-          },
-          updatedHotel,
-          { new: true }
-      );
+    const hotel = await Hotel.findOneAndUpdate(
+      {
+        _id: hotelId,
+        userId: userId,
+      },
+      updatedHotel,
+      { new: true }
+    );
 
-      if (!hotel) {
-          throw new Error("Hotel not found");
-      }
+    if (!hotel) {
+      throw new Error("Hotel not found");
+    }
 
-      hotel.imageUrls = [
-          ...updatedImageUrls,
-          ...(updatedHotel.imageUrls || []),
-      ];
+    hotel.imageUrls = [
+      ...updatedImageUrls,
+      ...(updatedHotel.imageUrls || []),
+    ];
 
-      revalidatePath("/hotel");
-      return JSON.parse(JSON.stringify(await hotel.save()));
-  } catch(error) {
+    revalidatePath("/hotel");
+    return JSON.parse(JSON.stringify(await hotel.save()));
+  } catch (error) {
     handleError(error);
   }
 
 };
 
+
+export const searchAction = async (
+  destination: string,
+  checkIn: string,
+  checkOut: string,
+  adultCount: string,
+  childCount: string) => {
+
+  const params = new URLSearchParams();
+  params.set("destination", destination);
+  params.set("checkIn", checkIn);
+  params.set("checkOut", checkOut);
+  params.set("adultCount", adultCount);
+  params.set("childCount", childCount);
+
+  redirect(`/search?${params.toString()}`);
+
+};
 

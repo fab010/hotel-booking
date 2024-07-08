@@ -2,12 +2,12 @@
 
 import { loadStripe } from "@stripe/stripe-js";
 import { useEffect } from "react";
-import { PaymentIntent } from "@/types";
+import { BookingHotelParams } from "@/types";
 import { Button } from "@/components/ui/button";
 import { createPaymentIntent } from "@/lib/actions/booking.action";
 
 type Props = {
-    paymentIntent: PaymentIntent;
+    paymentIntent: BookingHotelParams;
 };
 
 

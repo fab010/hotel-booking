@@ -59,70 +59,66 @@ const LoginForm = () => {
 
 
     return (
-        <div className="flex justify-center items-center my-3">
-            <div className="flex flex-col gap-2 rounded-lg p-10 shadow-[black] shadow-lg">
-                <h2 className="text-2xl font-bold text-center">Sign In</h2>
-                <Form {...form}>
-                    <form
-                        onSubmit={form.handleSubmit(onSubmit)}
-                        className="space-y-6">
-                        <div className="space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="email"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Email</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                disabled={isPending}
-                                                type="email"
-                                                autoFocus
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                disabled={isPending}
-                                                type="password"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        {error && (<span className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive">
-                            {error}
-                        </span>
-                        )}
-                        <Button
-                            disabled={isPending}
-                            type="submit"
-                            size="lg"
-                            className="bg-blue-600 text-white w-full font-semibold text-lg rounded-lg hover:bg-blue-500"
-                        >
-                            Login
-                        </Button>
-                    </form>
-                </Form>
-                <Link href="/register" className="text-muted-foreground text-sm">
-                    {"Don't have an account?"} <span className="underline">Register</span>
-                </Link>
-            </div>
+        <div className="flex flex-col gap-4 rounded-lg px-10 py-4 shadow-[black] shadow-lg mt-4">
+            <h2 className="text-xl font-semibold text-center">Login</h2>
+            <Form {...form}>
+                <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem className="text-sm font-medium">
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            disabled={isPending}
+                                            type="email"
+                                            className="w-full h-8"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem className="text-sm font-medium">
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            disabled={isPending}
+                                            type="password"
+                                            className="w-full h-8"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    {error && (<span className="bg-destructive/15 p-3 rounded-md flex items-center gap-x-2 text-sm text-destructive">
+                        {error}
+                    </span>
+                    )}
+                    <Button
+                        disabled={isPending}
+                        type="submit"
+                        size="lg"
+                        className="bg-blue-600 text-white w-full font-semibold text-lg rounded-lg hover:bg-blue-500"
+                    >
+                        Login
+                    </Button>
+                </form>
+            </Form>
+            <Link href="/register" className="text-muted-foreground text-sm">
+                {"Don't have an account?"} <span className="underline text-slate-700 font-medium">Register</span>
+            </Link>
         </div>
-
     );
 }
 

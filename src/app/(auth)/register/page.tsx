@@ -4,7 +4,9 @@ import RegisterForm from "@/components/forms/manage-user-form/register-form";
 const Register = () => {
     return (
         <Container>
-            <RegisterForm />
+            <div className="flex justify-center items-center">
+                <RegisterForm />
+            </div>
         </Container>
     );
 }

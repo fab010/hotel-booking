@@ -47,7 +47,16 @@ export type BookingParams = {
   createdAt: Date;
 };
 
-export type SearchParams = {
+export type BookingHotelParams = {
+  checkIn: Date;
+  checkOut: Date;
+  adultCount: number;
+  childCount: number;
+  hotelId: string;
+  userId: string;
+};
+
+export type SearchHotelQuery = {
   destination?: string;
   checkIn?: string;
   checkOut?: string;
@@ -71,20 +80,6 @@ export type HotelSearchResponse = {
   };
 };
 
-export type PaymentIntent = {
-  adultCount: number;
-  childCount: number;
-  checkIn: Date;
-  checkOut: Date;
-  hotelId: string;
-  userId: string;
-};
-
-export type PaymentIntentResponse = {
-  paymentIntentId: string;
-  clientSecret: string;
-  totalCost: number;
-};
 
 export type RegisterDataType = {
   firstName: String;
@@ -100,16 +95,16 @@ export type SignInDataType = {
 };
 
 export type HotelFormData = {
-name: string;
-city: string;
-country: string;
-description: string;
-type: string;
-pricePerNight: number;
-starRating: number;
-facilities: string[];
-imageFiles: FileList;
-imageUrls: string[];
-adultCount: number;
-childCount: number;
+  name: string;
+  city: string;
+  country: string;
+  description: string;
+  type: string;
+  pricePerNight: number;
+  starRating: number;
+  facilities: string[];
+  imageFiles: FileList;
+  imageUrls: string[];
+  adultCount: number;
+  childCount: number;
 };

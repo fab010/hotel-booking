@@ -5,7 +5,7 @@ import { getHotel } from "@/lib/actions/hotel.action";
 import { HotelType } from "@/types";
 import Container from "@/components/container";
 import GuestForm from "@/components/forms/guest-form";
-import { notFound } from "next/navigation";
+
 
 
 const HotelDetail = async ({ params: { id } }: { params: { id: string } }) => {
@@ -24,7 +24,7 @@ const HotelDetail = async ({ params: { id } }: { params: { id: string } }) => {
 
     return (
         <Container>
-            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 my-3">
                 <div className="space-y-6">
                     <div className="space-y-2">
                         <h1 className="text-3xl font-bold">{hotel.name}</h1>

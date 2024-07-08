@@ -4,7 +4,9 @@ import LoginForm from "@/components/forms/manage-user-form/login-form";
 const Login = () => {
     return (
         <Container>
-            <LoginForm />
+            <div className="flex justify-center items-center">
+                <LoginForm />
+            </div>
         </Container>
     );
 }

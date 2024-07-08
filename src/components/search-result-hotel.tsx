@@ -1,23 +1,32 @@
+"use client";
+
 import { AiFillStar } from "react-icons/ai";
 import Link from "next/link";
 import Image from "next/image";
 import { HotelType } from '@/types';
 import { Button } from '@/components/ui/button';
+import { useSearchContext } from "@/context/search-context";
 
 type Props = {
   hotel: HotelType;
 };
 
-const SearchHotel = ({ hotel }: Props) => {
+const SearchResultHotel = ({ hotel }: Props) => {
+  const search = useSearchContext();
+  const params = new URLSearchParams();
+  params.set("destination", search.destination);
+  params.set("checkIn", new Date(search.checkIn).toDateString());
+  params.set("checkOut", new Date(search.checkOut).toDateString());
+  params.set("adultCount", search.adultCount.toString());
+  params.set("childCount", search.childCount.toString());
   return (
     <div className="grid grid-cols-1 md:grid-cols-[1fr_3fr] border border-slate-300 rounded-lg p-8 gap-8">
-      <div className="relative h-[300px] overflow-hidden">
+      <div className="relative h-[300px] overflow-hidden aspect-auto">
         <Image
           src={hotel.imageUrls[0]}
           alt={hotel.name}
-          width={300}
-          height={300}
-          className="w-full h-full object-cover object-center"
+          fill
+          className="w-full h-auto object-cover object-center"
         />
       </div>
       <div className="grid grid-rows-[1fr_2fr_1fr]">
@@ -61,7 +70,7 @@ const SearchHotel = ({ hotel }: Props) => {
                 className="bg-blue-600 text-white font-semibold text-xl rounded-lg hover:bg-blue-500"
               >
                 <Link
-                  href={`/hotel/${hotel._id}/details`}
+                  href={`/hotel/${hotel._id}/details?${params.toString()}`}
                 >
                   View More
                 </Link>
@@ -74,4 +83,4 @@ const SearchHotel = ({ hotel }: Props) => {
   );
 }
 
-export default SearchHotel;
+export default SearchResultHotel;
