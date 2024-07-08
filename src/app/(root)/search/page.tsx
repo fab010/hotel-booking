@@ -30,9 +30,10 @@ const Search = async ({
     );
   };
 
+
   return (
     <Container>
-      <div className='flex items-center justify-center my-3'>
+      <div className='flex flex-col items-center gap-3 my-3'>
         <div className="relative grid grid-cols-1 md:grid-cols-[250px_1fr] gap-5">
           <div className="rounded-lg border border-slate-300 p-5 h-fit sticky top-10">
             <div className="space-y-5 max-sm:hidden">

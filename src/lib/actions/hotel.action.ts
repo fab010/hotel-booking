@@ -223,21 +223,4 @@ export const editHotel = async (hotelFormData: FormData) => {
 };
 
 
-export const searchAction = async (
-  destination: string,
-  checkIn: string,
-  checkOut: string,
-  adultCount: string,
-  childCount: string) => {
-
-  const params = new URLSearchParams();
-  params.set("destination", destination);
-  params.set("checkIn", checkIn);
-  params.set("checkOut", checkOut);
-  params.set("adultCount", adultCount);
-  params.set("childCount", childCount);
-
-  redirect(`/search?${params.toString()}`);
-
-};
 

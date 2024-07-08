@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from "react-hook-form";
 import { LuCalendarDays } from "react-icons/lu";
-import { addDays } from "date-fns";
 import DatePicker from "react-datepicker";
 import { HotelType } from '@/types';
 
@@ -32,6 +31,7 @@ const GuestForm = ({ hotel, isLoggedIn }: Props) => {
         adultCount: searchParams.get('adultCount'),
         childCount: searchParams.get('childCount'),
     }
+
 
     const {
         watch,
@@ -65,6 +65,7 @@ const GuestForm = ({ hotel, isLoggedIn }: Props) => {
 
         const params = new URLSearchParams();
 
+        
         params.set("checkIn", checkIn.toDateString());
         params.set("checkOut", checkOut.toDateString());
         params.set("adultCount", adultCount.toString());

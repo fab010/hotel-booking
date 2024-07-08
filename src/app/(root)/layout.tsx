@@ -8,9 +8,9 @@ export default function RootLayout({
 }) {
     return (
         <SearchContextProvider>
-            <div className="flex flex-col">
+            <div className="flex flex-col w-full">
                 <SearchBar />
-                <main className="flex-1">{children}</main>
+                <main>{children}</main>
             </div>
         </SearchContextProvider>
     )
