@@ -42,6 +42,7 @@ const SearchBar = () => {
 
   const checkIn = watch("checkIn");
   const checkOut = watch("checkOut");
+
   const handleChange = ([newStartDate, newEndDate]: [Date, Date]) => {
     setValue("checkIn", newStartDate);
     setValue("checkOut", newEndDate);
@@ -85,7 +86,6 @@ const SearchBar = () => {
           <MdTravelExplore size={25} className="mr-2" />
           <input
             type="text"
-            value={search.destination}
             placeholder="Where are you going?"
             className="text-sm font-medium w-full h-8 focus:outline-none"
             {...register("destination", {
@@ -100,7 +100,6 @@ const SearchBar = () => {
             <input
               className="w-full focus:outline-none"
               type="number"
-              value={search.adultCount}
               min={1}
               max={20}
               {...register("adultCount", {
@@ -118,7 +117,6 @@ const SearchBar = () => {
             <input
               className="w-full focus:outline-none"
               type="number"
-              value={search.childCount}
               min={0}
               max={10}
               {...register("childCount", {
@@ -130,9 +128,9 @@ const SearchBar = () => {
         <div className="bg-white p-2 rounded-lg">
           <DatePicker
             showIcon
-            selected={search.checkIn}
-            startDate={search.checkIn}
-            endDate={search.checkOut}
+            selected={checkIn}
+            startDate={checkIn}
+            endDate={checkOut}
             onChange={handleChange}
             selectsRange
             dateFormat=" eee MMM d"
