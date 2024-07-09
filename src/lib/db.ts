@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+export const runtime = 'nodejs';
+
 const MONGO_URL = process.env.MONGO_URL as string;
 
 let cached = global.mongoose;
