@@ -10,7 +10,7 @@ import {
   hotelDetailsRoute,
 } from "@/routes";
 
-
+export const runtime = 'nodejs';
 
 const { auth: middleware } = NextAuth(authConfig);
 
